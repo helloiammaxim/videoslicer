@@ -240,6 +240,15 @@ label.pill{display:inline-flex;align-items:center}
 .rot button:hover{border-color:var(--accent);color:var(--accent)}
 .rot button:active{transform:scale(.96)}
 .rot svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.seg.small button[data-aspect]{padding:5px 2px}
+#recBtn .dot{fill:#ff453a;stroke:none}
+#recBtn[aria-pressed="true"]{background:#ff453a;color:#fff}
+#recBtn[aria-pressed="true"] .dot{fill:#fff}
+.recpill{position:fixed;z-index:8;left:50%;top:calc(18px + env(safe-area-inset-top,0px));transform:translateX(-50%);display:flex;align-items:center;gap:8px;
+  padding:7px 8px 7px 12px;border-radius:999px;border:0;background:#ff453a;color:#fff;font:600 12px var(--f-mono);cursor:pointer;box-shadow:var(--shadow)}
+.recpill i{width:8px;height:8px;border-radius:50%;background:#fff;animation:recblink 1s steps(2) infinite}
+.recpill b{font:600 11px var(--f-ui);background:rgba(255,255,255,.22);padding:4px 9px;border-radius:999px}
+@keyframes recblink{50%{opacity:.25}}
 @media (max-width:760px){
   .brand span,.hint{display:none}
   .seg.views button{padding:6px 9px}
@@ -267,6 +276,7 @@ label.pill{display:inline-flex;align-items:center}
     <button class="iconbtn glass" id="gizmoBtn" aria-pressed="true" title="Move gizmo"><svg viewBox="0 0 24 24"><path d="M12 13V4M12 13l7 4M12 13l-7 4"/><path d="M9.5 6.5 12 4l2.5 2.5"/></svg></button>
     <button class="iconbtn glass" id="snapBtn" aria-pressed="false" title="Snap to grid (hold Ctrl to invert)"><svg viewBox="0 0 24 24"><path d="M6 4v8a6 6 0 0 0 12 0V4"/><path d="M6 8h3M15 8h3"/></svg></button>
     <button class="iconbtn glass" id="animBtn" aria-pressed="false" title="Keyframes"><svg viewBox="0 0 24 24"><path d="M12 5l5 7-5 7-5-7z"/><path d="M3 12h2M19 12h2"/></svg></button>
+    <button class="iconbtn glass" id="recBtn" title="Record live: capture your drags and playback in real time" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3" class="dot"/></svg></button>
     <button class="iconbtn glass" id="exportBtn" title="Export frame or video (E)"><svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19h14"/></svg></button>
     <button class="iconbtn glass" id="autoBtn" aria-pressed="false" title="Auto-rotate"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4h-4"/></svg></button>
     <button class="iconbtn glass" id="panelBtn" aria-pressed="true" title="Inspector"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button>
@@ -284,6 +294,11 @@ label.pill{display:inline-flex;align-items:center}
     <label class="tg">Floor collision<input type="checkbox" id="t-floor"><i></i></label>
   </div></section>
   <section class="sec" id="sec-cam"><h3>Camera <em id="camOut">yaw 45° · tilt 29°</em></h3>
+    <div class="row" style="margin-bottom:10px"><label>Output frame</label><span></span>
+      <div class="seg small" role="group" aria-label="Output frame" style="grid-column:1/-1">
+        <button data-aspect="window" aria-pressed="true">Window</button><button data-aspect="16:9" aria-pressed="false">16:9</button><button data-aspect="1:1" aria-pressed="false">1:1</button><button data-aspect="4:5" aria-pressed="false">4:5</button><button data-aspect="9:16" aria-pressed="false">9:16</button>
+      </div>
+    </div>
     <div class="seg small" role="group" aria-label="Rotation step" style="margin-bottom:8px">
       <button data-step="1" aria-pressed="false">1°</button><button data-step="5" aria-pressed="false">5°</button><button data-step="20" aria-pressed="false">20°</button><button data-step="30" aria-pressed="false">30°</button><button data-step="45" aria-pressed="true">45°</button><button data-step="90" aria-pressed="false">90°</button>
     </div>
@@ -328,6 +343,15 @@ label.pill{display:inline-flex;align-items:center}
     <div class="btns"><button class="pill" id="pathReset">Reset path</button><button class="pill" id="pathFromPhys">Copy physics shape</button></div>
   </section>
   <section class="sec" id="sec-shape"><h3>Shape</h3></section>
+  <section class="sec" id="sec-wave"><h3>Wave effector <em>animated</em></h3>
+    <div class="row"><label>Axis</label><span></span>
+      <div class="seg small" role="group" aria-label="Wave axis" style="grid-column:1/-1">
+        <button id="wa-x" aria-pressed="false">X</button><button id="wa-y" aria-pressed="false">Y</button><button id="wa-z" aria-pressed="true">Z</button>
+      </div>
+    </div>
+    <div class="toggles" style="margin-bottom:12px"><label class="tg">Front frame stays still<input type="checkbox" id="t-fxfront" checked><i></i></label></div>
+  </section>
+  <section class="sec" id="sec-rand"><h3>Random effector</h3></section>
   <section class="sec" id="sec-look"><h3>Look</h3>
     <div class="looks"><button id="look-video">Clean</button><button id="look-duo">Duotone</button><button id="look-glow">Glow</button></div>
   </section>
@@ -408,6 +432,7 @@ label.pill{display:inline-flex;align-items:center}
     <div id="x-progress" hidden><div class="pbar"><i id="x-bar"></i></div><div class="prow"><span id="x-ptext">Rendering…</span><button class="pill" id="x-cancel">Cancel</button></div></div>
   </div>
 </div>
+<button class="recpill" id="recPill" hidden><i></i><span id="recTime">REC 00:00</span><b>Stop</b></button>
 <div class="toast glass" id="toast" role="status"></div>
 <div class="drop" id="drop" hidden>Drop a video to slice it</div>
 
@@ -424,7 +449,7 @@ const P = {
   follow:0, twist:0, taper:1, radius:0.4,
   ghost:0.5, fade:0.5, fadeBias:1, tint:0,
   blend:'mul', spline:true, grid:true, hold:true, autorotate:false,
-  mode:'physics', bgColor:'#e9e4da', gizmo:true, snap:false, snapStep:0.5, corner:2, gravity:2.5, weight:0, floor:false, speed:1, sim:1, bias:1, even:true,
+  mode:'physics', spread:1, aspect:'window', wAxis:'z', fxFront:true, wAmp:0, wFreq:1, wSpeed:0.5, wScale:0, wRot:0, rPos:0, rRot:0, rScale:0, rSeed:7, stroke:0, fill:1, bgColor:'#e9e4da', gizmo:true, snap:false, snapStep:0.5, corner:2, gravity:2.5, weight:0, floor:false, speed:1, sim:1, bias:1, even:true,
   key:'off', thresh:0.5, soft:0.08, stage:'paper'
 };
 const DEFS = {
@@ -443,6 +468,7 @@ const DEFS = {
     ['sim','Sim speed',0.1,2,0.01,v=>v.toFixed(2)+'×'],
   ],
   'sec-dist':[
+    ['spread','Spread',0,1,0.01,v=>Math.round(v*100)+'%'],
     ['bias','Spacing bias',0.3,3,0.01,v=>v<0.98?'denser back':v>1.02?'denser front':'even'],
   ],
   'sec-shape':[
@@ -457,6 +483,21 @@ const DEFS = {
     ['fade','Fade',-1,1,0.01,v=>v<-0.005?'to front '+Math.round(-v*100)+'%':v>0.005?'to back '+Math.round(v*100)+'%':'none 0%'],
     ['fadeBias','Fade bias',0.2,5,0.01,v=>v.toFixed(2)],
     ['tint','Tint',0,1,0.01,v=>Math.round(v*100)+'%'],
+    ['stroke','Outline',0,0.4,0.005,v=>v.toFixed(3)],
+    ['fill','Image fill',0,1,0.01,v=>Math.round(v*100)+'%'],
+  ],
+  'sec-wave':[
+    ['wAmp','Offset',0,3,0.01,v=>v.toFixed(2)],
+    ['wScale','Scale pulse',0,0.6,0.01,v=>Math.round(v*100)+'%'],
+    ['wRot','Rotate',0,90,1,v=>v.toFixed(0)+'°'],
+    ['wFreq','Waves along stack',0,4,0.05,v=>v.toFixed(2)],
+    ['wSpeed','Speed',-2,2,0.01,v=>v.toFixed(2)+' /s'],
+  ],
+  'sec-rand':[
+    ['rPos','Position',0,2,0.01,v=>v.toFixed(2)],
+    ['rRot','Rotation',0,45,1,v=>v.toFixed(0)+'°'],
+    ['rScale','Scale',0,0.6,0.01,v=>Math.round(v*100)+'%'],
+    ['rSeed','Seed',1,99,1,v=>v.toFixed(0)],
   ],
   'sec-key':[
     ['thresh','Threshold',0,1,0.01,v=>v.toFixed(2)],
@@ -464,15 +505,16 @@ const DEFS = {
   ],
 };
 // click any slider value to type an exact number (percent values are typed as percent)
-function makeEditable(out, min, max, step, fmt, get, commit){
+function makeEditable(out, min, max, step, fmt, get, commit, typedMax){
   const pct = /%$/.test(String(fmt(max)));
+  const tmax = () => typedMax === undefined ? max : (typeof typedMax === 'function' ? typedMax() : typedMax);
   const scale = pct ? 100 : 1;
   out.classList.add('num'); out.tabIndex = 0; out.setAttribute('role','button');
   out.title = 'Click to type a value';
   const open = () => {
     if (out.hidden) return;
     const f = document.createElement('input');
-    f.type = 'number'; f.className = 'numedit'; f.step = String(step*scale); f.min = String(min*scale); f.max = String(max*scale);
+    f.type = 'number'; f.className = 'numedit'; f.step = String(step*scale); f.min = String(min*scale); f.max = String(tmax()*scale);
     const dec = String(step*scale).split('.')[1]?.length || 0;
     f.value = (get()*scale).toFixed(Math.min(dec, 3));
     f.setAttribute('aria-label', 'Value');
@@ -480,7 +522,11 @@ function makeEditable(out, min, max, step, fmt, get, commit){
     let done = false;
     const close = ok => {
       if (done) return; done = true;
-      if (ok && f.value.trim() !== '' && isFinite(+f.value)) commit(clamp(+f.value/scale, min, max));
+      if (ok && f.value.trim() !== '' && isFinite(+f.value)){
+        const raw = +f.value/scale, hi = tmax();
+        if (raw > hi) toast(`Capped at ${fmt(hi)}${typedMax !== undefined ? ' (' + capReason() + ')' : ''}`);
+        commit(clamp(raw, min, hi));
+      }
       f.remove(); out.hidden = false;
     };
     f.addEventListener('keydown', e => { e.stopPropagation(); if (e.key==='Enter'){ close(true); out.focus(); } if (e.key==='Escape'){ close(false); out.focus(); } });
@@ -489,6 +535,21 @@ function makeEditable(out, min, max, step, fmt, get, commit){
   out.addEventListener('click', open);
   out.addEventListener('keydown', e => { if (e.key==='Enter' || e.key===' '){ e.preventDefault(); open(); } });
 }
+/* Slices can be typed above the slider, up to the number of frames the source can fill
+   (video length × frame rate ÷ frame step). The demo clip loops forever, so it gets a fixed ceiling. */
+const SLICE_CEIL = 1000;
+let srcFps = 30;
+function maxSlices(){
+  if (source === 'video' && isFinite(video.duration) && video.duration > 0)
+    return clamp(Math.floor(video.duration * srcFps / P.step), 6, SLICE_CEIL);
+  return SLICE_CEIL;
+}
+function capReason(){
+  return source === 'video' && isFinite(video.duration)
+    ? `${Math.floor(video.duration*srcFps)} frames in this video at ${Math.round(srcFps)} fps${P.step > 1 ? ', every ' + P.step : ''}`
+    : `limit ${SLICE_CEIL}`;
+}
+const TYPED_MAX = { slices: () => maxSlices() };
 const ctrls = {};
 for (const [sec, list] of Object.entries(DEFS)) {
   const host = $(sec);
@@ -497,11 +558,12 @@ for (const [sec, list] of Object.entries(DEFS)) {
     row.innerHTML = `<label for="p-${key}">${label}</label><output id="o-${key}"></output><input type="range" id="p-${key}" min="${min}" max="${max}" step="${step}">`;
     host.appendChild(row);
     const inp = row.querySelector('input'), out = row.querySelector('output');
-    const sync = () => { inp.style.setProperty('--p', ((inp.value-min)/(max-min)*100)+'%'); out.textContent = fmt(+inp.value); };
+    // the readout shows the real value, which can be above the slider's range when typed
+    const sync = () => { inp.style.setProperty('--p', clamp((P[key]-min)/(max-min),0,1)*100+'%'); out.textContent = fmt(P[key]); };
     inp.value = P[key]; sync();
     inp.addEventListener('input', () => { P[key] = +inp.value; sync(); onParam(key); });
     ctrls[key] = { set(v){ P[key]=v; inp.value=v; sync(); onParam(key);} };
-    makeEditable(out, min, max, step, fmt, () => P[key], v => ctrls[key].set(v));
+    makeEditable(out, min, max, step, fmt, () => P[key], v => ctrls[key].set(step >= 1 ? Math.round(v) : v), TYPED_MAX[key]);
   }
 }
 
@@ -511,7 +573,8 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true, p
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 const scene = new THREE.Scene();
 const FRUSTUM = 15;
-const camera = new THREE.OrthographicCamera(-1,1,1,-1,0.1,400);
+const ZMIN = 0.03, ZMAX = 8;
+const camera = new THREE.OrthographicCamera(-1,1,1,-1,0.1,6000);
 const camTarget = new V3(0, 0, 3);
 const view = { yaw:0.78, pitch:0.5, tYaw:0.78, tPitch:0.5, zoom:1, tZoom:1, vYaw:0, vPitch:0 };
 
@@ -527,8 +590,8 @@ addEventListener('resize', resize); resize();
 let planeW = 8, planeH = 4.5;
 // floor: a dot at every 1-unit grid vertex, no lines
 const grid = (() => {
-  const n = 81, pos = new Float32Array(n*n*3); let o = 0;
-  for (let i=0;i<n;i++) for (let j=0;j<n;j++){ pos[o++] = i-40; pos[o++] = 0; pos[o++] = j-40; }
+  const n = 241, hn = 120, pos = new Float32Array(n*n*3); let o = 0;
+  for (let i=0;i<n;i++) for (let j=0;j<n;j++){ pos[o++] = i-hn; pos[o++] = 0; pos[o++] = j-hn; }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos,3));
   // analytic round dots, anti-aliased in the shader, a constant 1.6 CSS px on screen
   const m = new THREE.ShaderMaterial({
@@ -586,7 +649,7 @@ const frag = `
 varying vec2 vUv;
 uniform sampler2D map; uniform float opacity; uniform vec2 size; uniform float radius;
 uniform vec3 tint; uniform float tintAmt; uniform float mode; uniform float rim;
-uniform float keyMode; uniform float thresh; uniform float soft; uniform float corner;
+uniform float keyMode; uniform float thresh; uniform float soft; uniform float corner; uniform float stroke; uniform float fill;
 // rounded box with superellipse corners: n = 2 is a circular arc, higher n gives Apple-style continuous corners
 float sdRound(vec2 p, vec2 b, float r, float n){
   vec2 q = abs(p)-b+r; vec2 m = max(q,0.0);
@@ -611,7 +674,10 @@ void main(){
   col = mix(col, tint, tintAmt);
   float edge = 1.0 - smoothstep(0.0, aa*1.6, abs(d + aa*1.2));
   col = mix(col, vec3(1.0), edge*rim);
-  float a = cover*opacity*keyA;
+  // outline: a band of the slice's tint colour along the rounded edge; fill sets how much image shows inside
+  float inner = stroke > 0.0 ? 1.0 - smoothstep(-stroke - aa, -stroke + aa, d) : 1.0;
+  col = mix(tint, col, inner);
+  float a = cover*opacity*mix(1.0, fill*keyA, inner);
   if (a <= 0.002) discard;
   if (mode > 1.5) gl_FragColor = vec4(mix(vec3(1.0), col, a), 1.0);
   else gl_FragColor = vec4(col, a);
@@ -659,7 +725,24 @@ function srcReady(){ return source==='demo' || video.readyState >= 2; }
 function srcClock(){ return source==='demo' ? demoTime : video.currentTime; }
 
 let rvfc = 'requestVideoFrameCallback' in HTMLVideoElement.prototype, lastVT = -1;
-function hookFrames(){ if (!rvfc) return; const cb = () => { newFrame = true; video.requestVideoFrameCallback(cb); }; video.requestVideoFrameCallback(cb); }
+let fpsProbe = null;
+function hookFrames(){
+  if (!rvfc) return;
+  fpsProbe = null;
+  const cb = (now, meta) => {
+    newFrame = true;
+    // estimate the clip's frame rate from presented frames vs media time (1× playback, no seeks)
+    if (meta && meta.presentedFrames !== undefined){
+      if (!fpsProbe || meta.mediaTime < fpsProbe.t) fpsProbe = { f:meta.presentedFrames, t:meta.mediaTime };
+      else {
+        const dt = meta.mediaTime - fpsProbe.t, df = meta.presentedFrames - fpsProbe.f;
+        if (dt > 0.5 && df > 0 && video.playbackRate === 1){ const est = df/dt; if (est > 5 && est < 241) srcFps = Math.round(est*100)/100; fpsProbe = { f:meta.presentedFrames, t:meta.mediaTime }; }
+      }
+    }
+    video.requestVideoFrameCallback(cb);
+  };
+  video.requestVideoFrameCallback(cb);
+}
 
 function loadFile(file){
   if (!file || !file.type.startsWith('video')) { toast('That file isn\'t a video. Try an MP4 or WebM.'); return; }
@@ -669,6 +752,7 @@ function loadFile(file){
   video.addEventListener('loadeddata', function once(){
     video.removeEventListener('loadeddata', once);
     source = 'video'; srcAspect = video.videoWidth / video.videoHeight || 16/9;
+    if (P.slices > maxSlices()) { P.slices = maxSlices(); ctrls.slices.set(P.slices); toast(`Slices reduced to ${P.slices}: ${capReason()}`); }
     rebuild(); hookFrames();
     if (playing) video.play().catch(()=>{});
     toast('Loaded ' + file.name);
@@ -695,6 +779,13 @@ function rebuild(){
   N = P.slices; head=0; filled=0;
   bufW = 640; bufH = Math.round(bufW / srcAspect);
   if (bufH > 640) { bufH = 640; bufW = Math.round(640*srcAspect); }
+  // keep total frame memory near what 60 full-size slices use; more slices store smaller frames
+  const BUDGET = 640*360*60;
+  if (bufW*bufH*N > BUDGET){
+    const k = Math.sqrt(BUDGET / (bufW*bufH*N));
+    bufW = Math.max(64, Math.round(bufW*k)); bufH = Math.max(36, Math.round(bufH*k));
+    if (N !== rebuild.warned){ rebuild.warned = N; toastMore(`frames stored at ${bufW}×${bufH} to save memory`); }
+  }
   planeH = srcAspect >= 1 ? 8/srcAspect : 6; planeW = planeH*srcAspect;
   if (srcAspect >= 1) planeW = 8;
   for (let i=0;i<N;i++){
@@ -707,7 +798,7 @@ function rebuild(){
       extensions:{ derivatives:true },
       uniforms:{ map:{value:t}, opacity:{value:1}, size:{value:new THREE.Vector2(planeW,planeH)}, radius:{value:P.radius},
         tint:{value:new THREE.Color()}, tintAmt:{value:0}, mode:{value:0}, rim:{value:0},
-        keyMode:{value:0}, thresh:{value:0.5}, soft:{value:0.08}, corner:{value:2} }
+        keyMode:{value:0}, thresh:{value:0.5}, soft:{value:0.08}, corner:{value:2}, stroke:{value:0}, fill:{value:1} }
     });
     mats.push(m);
     const mesh = new THREE.Mesh(geom, m); mesh.scale.set(planeW, planeH, 1); mesh.frustumCulled=false;
@@ -805,6 +896,7 @@ function distribute(){
 const drag = { active:false, scripted:false, what:'front', axis:null, plane:new THREE.Plane(), offset:new V3(), target:new V3(), start:new V3(), dir:new V3(), s0:0 };
 
 function physics(dt){
+  fxTime += dt;
   dt *= P.sim;
   const sub = 4, h = dt/sub;
   const k = P.stiffness, c = 2*P.damping*Math.sqrt(k);
@@ -824,7 +916,7 @@ function physics(dt){
         tmp.y -= k * P.gravity * P.weight * 2;   // a heavy front end hangs from the anchor
         vF.addScaledVector(tmp,h); F.addScaledVector(vF,h);
       }
-      if (F.length() > 22) F.setLength(22);
+      if (F.length() > 400) F.setLength(400);
       if (P.floor && F.y < floorY){ F.y = floorY; if (vF.y < 0) vF.y *= -0.25; }
       tmp.copy(A).add(F).multiplyScalar(0.5);
       tmp.sub(C).multiplyScalar(kc).addScaledVector(vC,-cc);
@@ -857,9 +949,13 @@ function physics(dt){
 const Z = new V3(0,0,1), qI = new THREE.Quaternion(), qT = new THREE.Quaternion(), qTw = new THREE.Quaternion();
 const colA = new THREE.Color(), colB = new THREE.Color(), colT = new THREE.Color();
 const KEYMODE = { off:0, dark:1, light:2, mono:3 };
+let fxTime = 0;
+const FXAXIS = { x:new V3(1,0,0), y:new V3(0,0,-1), z:new V3(0,1,0) };   // Blender-style labels, Z up
+const qFx = new THREE.Quaternion(), eFx = new THREE.Euler();
+function hash01(x){ const s = Math.sin(x*12.9898) * 43758.5453; return s - Math.floor(s); }
 function layout(){
   colA.set($('tintA').value); colB.set($('tintB').value);
-  const stretch = P.mode==='stable' ? arcTotal : F.distanceTo(A);
+  const stretch = (P.mode==='stable' ? arcTotal : F.distanceTo(A)) * P.spread;
   const reveal = THREE.MathUtils.smoothstep(stretch, 0.05, 2.2);
   const rimAmt = P.blend==='mul' ? 0 : 0.18*reveal;
   for (let i=0;i<N;i++){
@@ -870,8 +966,26 @@ function layout(){
     if (P.twist) { qTw.setFromAxisAngle(Z, THREE.MathUtils.degToRad(P.twist)*t); m.quaternion.multiply(qTw); }
     // tiny step back along each slice's normal keeps a collapsed stack from z-fighting
     tmp2.copy(Z).applyQuaternion(m.quaternion).multiplyScalar(-i*0.004);
-    m.position.copy(pos[i]).add(tmp2);
-    const sc = lerp(1, P.taper, t);
+    // Spread pulls every slice toward the front frame; 0 collapses the stack in place
+    m.position.copy(pos[0]).lerp(pos[i], P.spread).add(tmp2);
+    let sc = lerp(1, P.taper, t);
+    // effectors (MoGraph style): a travelling wave and a seeded random offset per slice
+    const mask = P.fxFront ? Math.min(1, t*4) : 1;
+    if (mask > 0 && (P.wAmp || P.wScale || P.wRot || P.rPos || P.rRot || P.rScale)){
+      let rx = 0, ry = 0, rz = 0;
+      if (P.wAmp || P.wScale || P.wRot){
+        const sv = Math.sin(2*Math.PI*(t*P.wFreq - fxTime*P.wSpeed)) * mask;
+        m.position.addScaledVector(FXAXIS[P.wAxis], P.wAmp*sv);
+        sc *= 1 + P.wScale*sv; ry += P.wRot*D2R*sv;
+      }
+      if (P.rPos || P.rRot || P.rScale){
+        const r = k => hash01(i*7.13 + k*31.7 + P.rSeed*101.3)*2 - 1;
+        m.position.x += r(1)*P.rPos*mask; m.position.y += r(2)*P.rPos*mask; m.position.z += r(3)*P.rPos*mask;
+        rx += r(4)*P.rRot*D2R*mask; ry += r(5)*P.rRot*D2R*mask; rz += r(6)*P.rRot*D2R*mask;
+        sc *= 1 + r(7)*P.rScale*mask;
+      }
+      if (rx || ry || rz) m.quaternion.multiply(qFx.setFromEuler(eFx.set(rx, ry, rz)));
+    }
     m.scale.set(planeW*sc, planeH*sc, 1);
     u.size.value.set(planeW*sc, planeH*sc);
     u.radius.value = P.radius*sc;
@@ -884,7 +998,7 @@ function layout(){
     m.visible = u.opacity.value > 0.003;
     colT.copy(colA).lerp(colB, t); u.tint.value.copy(colT); u.tintAmt.value = P.tint;
     u.rim.value = i===0 ? rimAmt*0.6 : rimAmt;
-    u.corner.value = P.corner; u.keyMode.value = KEYMODE[P.key]; u.thresh.value = P.thresh; u.soft.value = P.soft;
+    u.corner.value = P.corner; u.stroke.value = P.stroke*sc; u.fill.value = P.fill; u.keyMode.value = KEYMODE[P.key]; u.thresh.value = P.thresh; u.soft.value = P.soft;
   }
   spline.visible = P.spline && stretch > 0.05;
   if (spline.visible){
@@ -968,10 +1082,27 @@ function pickGizmo(x,y){
   for (const id of gizIds()){ toScreen(gizWorld(id,tmp2), p); const d=(p.x-x)**2+(p.y-y)**2; if (d<=bd){ bd=d; best=id; } }
   return best;
 }
+function guideRect(){
+  const W = innerWidth, H = innerHeight;
+  if (P.aspect === 'window') return { x:0, y:0, w:W, h:H };
+  const [a, b] = P.aspect.split(':').map(Number), r = a/b;
+  // centred, so the camera zoom (which scales about the window centre) frames the same way in export
+  let w = W*0.9, h = w/r; if (h > H*0.82){ h = H*0.82; w = h*r; }
+  return { x:(W-w)/2, y:(H-h)/2, w, h };
+}
 function drawGizmos(){
   const dpr = Math.min(devicePixelRatio,2), w = innerWidth, h = innerHeight;
   if (gz.width !== Math.round(w*dpr) || gz.height !== Math.round(h*dpr)){ gz.width=Math.round(w*dpr); gz.height=Math.round(h*dpr); }
   gctx.setTransform(dpr,0,0,dpr,0,0); gctx.clearRect(0,0,w,h);
+  if (P.aspect !== 'window'){
+    const g = guideRect(), bg = renderer.getClearColor(new THREE.Color()), lum = 0.2126*bg.r + 0.7152*bg.g + 0.0722*bg.b;
+    gctx.fillStyle = lum > 0.5 ? 'rgba(20,20,30,.10)' : 'rgba(255,255,255,.07)';
+    gctx.fillRect(0, 0, w, g.y); gctx.fillRect(0, g.y+g.h, w, h-g.y-g.h); gctx.fillRect(0, g.y, g.x, g.h); gctx.fillRect(g.x+g.w, g.y, w-g.x-g.w, g.h);
+    gctx.strokeStyle = lum > 0.5 ? 'rgba(20,20,30,.35)' : 'rgba(255,255,255,.35)'; gctx.lineWidth = 1;
+    gctx.strokeRect(Math.round(g.x)+.5, Math.round(g.y)+.5, Math.round(g.w), Math.round(g.h));
+    gctx.fillStyle = gctx.strokeStyle; gctx.font = '500 10.5px "Geist Mono", ui-monospace, monospace';
+    gctx.fillText(P.aspect, g.x + 8, g.y + 16);
+  }
   if (document.body.classList.contains('clean')) return;
   const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
   const mono = '500 10.5px "Geist Mono", ui-monospace, monospace';
@@ -1166,11 +1297,19 @@ function updateCamera(dt){
     tmp.set(0,0,0); for (let i=0;i<N;i++) tmp.add(tgt[i]||A); tmp.divideScalar(N);
     camTarget.lerp(tmp, 1 - Math.exp(-dt*2));
   }
-  camera.position.set(Math.sin(view.yaw)*cp, Math.sin(view.pitch), Math.cos(view.yaw)*cp).multiplyScalar(80).add(camTarget);
+  camera.position.set(Math.sin(view.yaw)*cp, Math.sin(view.pitch), Math.cos(view.yaw)*cp).multiplyScalar(2500).add(camTarget);   // far back, so large moves never clip (orthographic: distance doesn't change size)
   camera.up.set(0,1,0);
   camera.lookAt(camTarget);
   camera.zoom = view.zoom; camera.updateProjectionMatrix();
   grid.material.uniforms.center.value.set(camTarget.x, camTarget.z);
+  // the dot field follows the view in whole-unit steps, so it never runs out and dots stay on the 1-unit grid
+  // when zoomed out, dots spread to 2, 4, 8… units apart so they stay about 12 px apart on screen
+  const pxPerUnit = innerHeight * view.zoom / (camera.top - camera.bottom);
+  const gs = Math.max(1, Math.pow(2, Math.ceil(Math.log2(12 / Math.max(pxPerUnit, 1e-3)))));
+  grid.scale.set(gs, 1, gs);
+  grid.position.x = Math.round(camTarget.x/gs)*gs; grid.position.z = Math.round(camTarget.z/gs)*gs;
+  const zf = 1/Math.max(view.zoom, 0.03);
+  grid.material.uniforms.fadeIn.value = Math.min(7*zf, 90*gs); grid.material.uniforms.fadeOut.value = Math.min(22*zf, 118*gs);
 }
 
 /* ---------- pointer interaction ---------- */
@@ -1233,7 +1372,7 @@ const mv = new V3();
 canvas.addEventListener('pointermove', e => {
   lastEvt = e;
   if (pointers.has(e.pointerId)) pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
-  if (pointers.size === 2){ const [a,b]=[...pointers.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y); if(pinch) view.tZoom = clamp(view.tZoom*d/pinch,0.3,4); pinch=d; return; }
+  if (pointers.size === 2){ const [a,b]=[...pointers.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y); if(pinch) view.tZoom = clamp(view.tZoom*d/pinch,ZMIN,ZMAX); pinch=d; return; }
   setNdc(e);
   if (drag.active){
     const sn = snapOn(e);
@@ -1271,7 +1410,7 @@ function up(e){
   drag.active = false; orbit.active = false; canvas.classList.remove('grabbing');
 }
 canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', up);
-canvas.addEventListener('wheel', e => { e.preventDefault(); view.tZoom = clamp(view.tZoom * Math.exp(-e.deltaY*0.0012), 0.3, 4); }, {passive:false});
+canvas.addEventListener('wheel', e => { e.preventDefault(); view.tZoom = clamp(view.tZoom * Math.exp(-e.deltaY*0.0012), ZMIN, ZMAX); }, {passive:false});
 canvas.addEventListener('dblclick', e => {
   if (P.mode==='stable' && !pathPoly){
     if (pickGizmo(e.clientX, e.clientY)) return;
@@ -1358,7 +1497,10 @@ addEventListener('keydown', e => {
   else if (e.key === 'Escape' && !EX.busy) $('exportSheet').hidden = true;
 });
 
-let toastT; function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+let toastT, toastAt = 0, toastMsg = '';
+// a second message within a moment is added to the first instead of replacing it
+function toastMore(msg){ toast(performance.now() - toastAt < 1500 && toastMsg ? toastMsg + ' · ' + msg : msg); }
+function toast(msg){ const t=$('toast'); t.textContent=msg; toastAt = performance.now(); toastMsg = msg; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
 
 const fmtTC = s => { s=Math.max(0,s); const m=Math.floor(s/60), sec=Math.floor(s%60), f=Math.floor((s%1)*30); return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}:${String(f).padStart(2,'0')}`; };
 
@@ -1726,7 +1868,7 @@ async function saveFile(filename, blob){
   setTimeout(() => URL.revokeObjectURL(url), 4000);
 }
 function exportSize(){
-  const dpr = Math.min(devicePixelRatio, 2), aw = innerWidth, ah = innerHeight;
+  const dpr = Math.min(devicePixelRatio, 2), g = guideRect(), aw = g.w, ah = g.h;
   let w, h;
   if (EX.size === 'screen'){ w = aw*dpr; h = ah*dpr; }
   else { const L = EX.size === '4k' ? 3840 : 2560; if (aw >= ah){ w = L; h = L*ah/aw; } else { h = L; w = L*aw/ah; } }
@@ -1768,8 +1910,12 @@ addEventListener('resize', () => { if (!$('exportSheet').hidden) syncExportUI();
 // switch the renderer to the export size; returns a restore function
 function beginOffscreen(w, h, transparent){
   const keep = { blend:P.blend, spline:spline.visible, dot:grid.material.uniforms.size.value };
-  renderer.setPixelRatio(1); renderer.setSize(w, h, false);       // same aspect, so the framing matches the screen
-  grid.material.uniforms.size.value = keep.dot * (w / (innerWidth*Math.min(devicePixelRatio,2)));
+  renderer.setPixelRatio(1); renderer.setSize(w, h, false);
+  // narrow the camera to the output frame, so the export matches the framed area on screen
+  const g = guideRect(), W = innerWidth, H = innerHeight, L = camera.left, R = camera.right, T = camera.top, B = camera.bottom;
+  camera.left = L + g.x/W*(R-L); camera.right = L + (g.x+g.w)/W*(R-L);
+  camera.top = T - g.y/H*(T-B); camera.bottom = T - (g.y+g.h)/H*(T-B); camera.updateProjectionMatrix();
+  grid.material.uniforms.size.value = keep.dot * (w / (g.w*Math.min(devicePixelRatio,2)));
   if (transparent){
     renderer.setClearColor(renderer.getClearColor(new THREE.Color()), 0);
     if (P.blend === 'mul'){ P.blend = 'normal'; applyBlend(); }   // multiply needs an opaque backdrop
@@ -1916,6 +2062,9 @@ function applySetup(s){
   setStage(q.stage || 'paper');
   setBlend(q.blend || 'mul');          // after the stage, so the preset's own blend wins
   setKey(q.key || 'off');
+  if (typeof q.spread !== 'number') ctrls.spread.set(1);
+  setAspect(q.aspect || 'window'); setWAxis(q.wAxis || 'z');
+  P.fxFront = q.fxFront !== false; $('t-fxfront').checked = P.fxFront;
   if (q.snapStep) setSnapStep(q.snapStep);
   setGizmo(q.gizmo !== false); setSnap(!!q.snap);
   P.autorotate = !!q.autorotate; $('autoBtn').setAttribute('aria-pressed', String(P.autorotate));
@@ -2018,6 +2167,53 @@ function camReadout(){
   $('camOut').textContent = `yaw ${Math.round(yd)}° · tilt ${Math.round(pd)}°`;
 }
 
+/* ---------- output frame, wave axis, front toggle ---------- */
+function setAspect(v){
+  P.aspect = v; document.querySelectorAll('[data-aspect]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.aspect === v)));
+  if (!$('exportSheet').hidden) syncExportUI();
+}
+document.querySelectorAll('[data-aspect]').forEach(b => b.onclick = () => setAspect(b.dataset.aspect));
+function setWAxis(v){ P.wAxis = v; for (const a of ['x','y','z']) $('wa-'+a).setAttribute('aria-pressed', String(a === v)); }
+for (const a of ['x','y','z']) $('wa-'+a).onclick = () => setWAxis(a);
+$('t-fxfront').addEventListener('change', e => P.fxFront = e.target.checked);
+
+/* ---------- live recording: captures the output frame in real time while you drag and play ---------- */
+let rec = null;
+function startRecord(){
+  if (!('MediaRecorder' in window) || !HTMLCanvasElement.prototype.captureStream){ toast('Live recording isn\'t supported in this browser. Use Export instead.'); return; }
+  const dpr = Math.min(devicePixelRatio, 2), g = guideRect();
+  const c2 = document.createElement('canvas');
+  c2.width = Math.round(g.w*dpr/2)*2; c2.height = Math.round(g.h*dpr/2)*2;
+  const ctx = c2.getContext('2d');
+  const mime = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4'].find(m => MediaRecorder.isTypeSupported(m));
+  if (!mime){ toast('This browser can\'t record video. Use Export instead.'); return; }
+  const stream = c2.captureStream(60), chunks = [];
+  const mr = new MediaRecorder(stream, { mimeType:mime, videoBitsPerSecond: Math.min(40e6, c2.width*c2.height*60*0.12) });
+  mr.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  mr.onstop = () => {
+    const ext = mime.includes('mp4') ? 'mp4' : 'webm';
+    saveFile(`video-slicer-live-${stamp()}.${ext}`, new Blob(chunks, { type:mime.split(';')[0] }));
+  };
+  rec = { c2, ctx, mr, g, dpr, t0:performance.now() };
+  mr.start(250);
+  $('recBtn').setAttribute('aria-pressed','true'); $('recPill').hidden = false;
+  toast('Recording the output frame. Drag, orbit and play keys; click Stop when done.');
+}
+function stopRecord(){
+  if (!rec) return; const r = rec; rec = null;
+  try { r.mr.stop(); } catch(e) {}
+  $('recBtn').setAttribute('aria-pressed','false'); $('recPill').hidden = true;
+}
+$('recBtn').onclick = () => rec ? stopRecord() : startRecord();
+$('recPill').onclick = stopRecord;
+function recFrame(){
+  if (!rec) return;
+  const { ctx, c2, g, dpr } = rec;
+  ctx.drawImage(canvas, g.x*dpr, g.y*dpr, g.w*dpr, g.h*dpr, 0, 0, c2.width, c2.height);
+  const s = Math.floor((performance.now() - rec.t0)/1000);
+  $('recTime').textContent = `REC ${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+}
+
 /* ---------- collapsible inspector sections, remembered per browser ---------- */
 (() => {
   let folded = {};
@@ -2059,7 +2255,9 @@ function frame(now){
   physics(dt);
   layout();
   updateCamera(dt);
+  if (rec && !EX.spline) spline.visible = false;
   renderer.render(scene, camera);
+  recFrame();
   drawGizmos();
 
   if ((uiTick += dt) > 0.1){
@@ -2079,5 +2277,4 @@ function frame(now){
 });
 })();
 </script>
-
 </body></html>
